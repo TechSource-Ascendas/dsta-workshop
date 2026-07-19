@@ -1,0 +1,15 @@
+fft8/fft8_dut/FFT/RADIX22FFT_SDF1_1/SimpleDualPortRAM_generic --> SimpleDualPortRAM_generic
+fft8/fft8_dut/FFT/RADIX22FFT_SDF1_1/SDFCommutator1 --> SDFCommutator1
+fft8/fft8_dut/FFT/RADIX22FFT_SDF1_1 --> RADIX22FFT_SDF1_1
+fft8/fft8_dut/FFT/RADIX22FFT_CTRL1_1 --> RADIX22FFT_CTRL1_1
+fft8/fft8_dut/FFT/RADIX22FFT_SDF2_2/SDFCommutator2 --> SDFCommutator2
+fft8/fft8_dut/FFT/RADIX22FFT_SDF2_2 --> RADIX22FFT_SDF2_2
+fft8/fft8_dut/FFT/RADIX22FFT_CTRL1_2 --> RADIX22FFT_CTRL1_2
+fft8/fft8_dut/FFT/TWDLROM_3_1 --> TWDLROM_3_1
+fft8/fft8_dut/FFT/RADIX22FFT_SDF1_3/Complex4Multiply --> Complex4Multiply
+fft8/fft8_dut/FFT/RADIX22FFT_SDF1_3/SDFCommutator3 --> SDFCommutator3
+fft8/fft8_dut/FFT/RADIX22FFT_SDF1_3 --> RADIX22FFT_SDF1_3
+fft8/fft8_dut/FFT/RADIX22FFT_CTRL1_1 --> RADIX22FFT_CTRL1_1_block
+fft8/fft8_dut/FFT/RADIX2FFT_bitNatural --> RADIX2FFT_bitNatural
+fft8/fft8_dut/FFT --> FFT
+fft8/fft8_dut --> fft8_dut

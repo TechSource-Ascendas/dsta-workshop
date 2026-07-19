@@ -1,0 +1,13 @@
+Time resolution is 1 ps
+=== Parallel 8-point FFT Result Extraction ===
+Bin      Real        Imag     (Expected Re, Im)
+0    0       0      (0, 0)
+1    0       0      (0, 0)
+2    4000       0      (4000, 0)
+3    0       0      (0, 0)
+4    0       0      (0, 0)
+5    0       0      (0, 0)
+6    4000       0      (4000, 0)
+7    0       0      (0, 0)
+SUCCESS: Spectrum perfectly matches reference (Peaks at Bin 2 & 6).
+$stop called at time : 36 ns : File "C:/demo/hdl_coder_led_blinking/FFT_Comparison/AMD/fft8_tb.vhd" Line 101

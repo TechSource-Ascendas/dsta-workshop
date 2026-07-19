@@ -1,0 +1,1 @@
+-debug "typical" "work.fft8_tb" -s "fft8_sim" 

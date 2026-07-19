@@ -1,0 +1,8 @@
+# compile vhdl design source files
+vhdl xil_defaultlib  \
+"../../../../../fft8_pkg.vhd" \
+"../../../../../fft8.vhd" \
+"../../../../../fft8_tb.vhd" \
+
+# Do not sort compile order
+nosort

@@ -1,0 +1,10 @@
+open_system('flash_led');
+open_system('gm_flash_led');
+cs.HiliteType = 'user1';
+cs.ForegroundColor = 'black';
+cs.BackgroundColor = 'cyan';
+set_param(0, 'HiliteAncestorsData', cs);
+hilite_system('gm_flash_led/flash_led_top/led_lookup', 'user1');
+annotate_port('gm_flash_led/flash_led_top/led_lookup', 0, 1, 'Lookup Table mapped to RAM');
+hilite_system('flash_led/flash_led_top/led_lookup', 'user1');
+annotate_port('flash_led/flash_led_top/led_lookup', 0, 1, 'Lookup Table mapped to RAM');

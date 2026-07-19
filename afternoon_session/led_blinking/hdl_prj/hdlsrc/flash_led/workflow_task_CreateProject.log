@@ -1,0 +1,24 @@
+Task "Create Project" successful.
+Generated logfile: 
+
+****** Vivado v2024.1 (64-bit)
+  **** SW Build 5076996 on Wed May 22 18:37:14 MDT 2024
+  **** IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
+  **** SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
+  **** Start of session at: Mon Jul 13 00:18:40 2026
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source flash_led_top_Xilinx_Vivado_run.tcl -notrace
+### Open existing Xilinx Vivado 2024.1 project <a href="matlab:downstream.handle('Model','flash_led').openTargetTool;">hdl_prj\vivado_prj\flash_led_top_vivado.xpr</a>
+INFO: [filemgmt 56-3] Default IP Output Path : Could not find the directory 'C:/demo/hdl_coder_led_blinking/hdl_prj/vivado_prj/flash_led_top_vivado.gen/sources_1'.
+Scanning sources...
+Finished scanning sources
+open_project: Time (s): cpu = 00:00:10 ; elapsed = 00:00:10 . Memory (MB): peak = 631.969 ; gain = 202.176
+### Set Xilinx Vivado 2024.1 project properties
+### Update Xilinx Vivado 2024.1 project with HDL source files
+WARNING: [Vivado 12-818] No files matched '*.tcl'
+### Close Xilinx Vivado 2024.1 project.
+INFO: [Common 17-206] Exiting Vivado at Mon Jul 13 00:18:58 2026...
+
+Elapsed time is 19.8849 seconds.

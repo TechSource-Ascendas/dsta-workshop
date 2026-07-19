@@ -1,0 +1,5 @@
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/AMD/fft8_pkg.vhd" into library work
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/AMD/fft8.vhd" into library work
+INFO: [VRFC 10-3107] analyzing entity 'fft8'
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/AMD/fft8_tb.vhd" into library work
+INFO: [VRFC 10-3107] analyzing entity 'fft8_tb'

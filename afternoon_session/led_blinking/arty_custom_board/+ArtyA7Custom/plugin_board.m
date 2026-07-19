@@ -1,0 +1,59 @@
+function hB = plugin_board()
+% Board definition for the Digilent Arty A7-35T
+%
+% Modeled on the plugin shipped with HDL Coder:
+%   matlabroot/toolbox/hdlcoder/boards/amd/+XilinxArty/plugin_board.m
+% but with the full 8-LED bank used by the flash_led lab (4 green LEDs
+% plus the green channel of the 4 RGB LEDs) and the correct LVCMOS33
+% I/O standard from the Digilent Arty A7 master XDC.
+
+% Construct board object
+hB = hdlcoder.Board;
+
+hB.BoardName    = 'Digilent Arty A7-35T (custom)';
+
+% FPGA device information
+hB.FPGAVendor   = 'Xilinx';
+hB.FPGAFamily   = 'Artix7';
+hB.FPGADevice   = 'xc7a35ti';
+hB.FPGAPackage  = 'csg324';
+hB.FPGASpeed    = '-1L';
+
+% Tool information
+hB.SupportedTool = {'Xilinx Vivado'};
+
+% FPGA JTAG chain position
+hB.JTAGChainPosition = 1;
+
+% Bitstream/top-level name postfix
+hB.TopLevelNamePostfix = 'arty_a7_35t';
+
+% 8 LEDs: LD4..LD7 (green) then the green channel of RGB LEDs LD0..LD3
+hB.addExternalIOInterface( ...
+    'InterfaceID',    'LEDs General Purpose', ...
+    'InterfaceType',  'OUT', ...
+    'PortName',       'GPLEDs', ...
+    'PortWidth',      8, ...
+    'FPGAPin',        {'H5','J5','T9','T10','F6','J4','J2','H6'}, ...
+    'IOPadConstraint', {'IOSTANDARD = LVCMOS33'});
+
+% Push buttons BTN1..BTN3 (BTN0 on pin D9 is reserved: the reference
+% design uses it as the external system reset)
+hB.addExternalIOInterface( ...
+    'InterfaceID',    'Push Buttons', ...
+    'InterfaceType',  'IN', ...
+    'PortName',       'PBs', ...
+    'PortWidth',      3, ...
+    'FPGAPin',        {'C9','B9','B8'}, ...
+    'IOPadConstraint', {'IOSTANDARD = LVCMOS33'});
+
+% Slide switches SW0..SW3
+hB.addExternalIOInterface( ...
+    'InterfaceID',    'Slide Switches', ...
+    'InterfaceType',  'IN', ...
+    'PortName',       'DIPSwitches', ...
+    'PortWidth',      4, ...
+    'FPGAPin',        {'A8','C11','C10','A10'}, ...
+    'IOPadConstraint', {'IOSTANDARD = LVCMOS33'});
+
+end

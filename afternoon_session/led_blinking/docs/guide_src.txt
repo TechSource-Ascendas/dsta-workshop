@@ -1,0 +1,210 @@
+%[text] # Lab: LED Running Lights on the Arty A7-35T with HDL Coder
+%[text] This lab recreates the classic Vivado *running lights* design using the MathWorks model-based HDL deployment workflow. The design is captured as a Simulink model built from a few high-level library blocks, VHDL is generated with **HDL Coder**, and the **HDL Workflow Advisor** creates a Xilinx Vivado project. The board-level steps - pin assignment, bitstream generation and JTAG programming - are then completed interactively in the Vivado GUI, exactly like a hand-written RTL project.
+%[text] **Objectives**
+%[text] - Build a hardware-ready Simulink model of an 8-bit running-light controller from library blocks
+%[text] - Generate VHDL from the model with HDL Coder and inspect the generated code
+%[text] - Create a Vivado project and run synthesis and implementation from the HDL Workflow Advisor
+%[text] - Assign board pins, generate a bitstream and program the Digilent Arty A7-35T from the Vivado GUI \
+%[text] **Requirements**
+%[text] - MATLAB with Simulink, HDL Coder and Fixed-Point Designer (this lab used R2026a)
+%[text] - Xilinx Vivado 2024.1 installed at `C:\Xilinx\Vivado\2024.1`
+%[text] - Digilent Arty A7-35T connected over USB \
+%[text] **Note:** in current MATLAB releases the HDL Workflow Advisor offers the *Generic ASIC/FPGA* workflow for boards that are not shipped with a support package (the older *FPGA Turnkey* workflow was removed). This workflow generates code, creates the Vivado project and runs synthesis and implementation for analysis - the final board-specific steps are done in Vivado, and this lab walks through all of them. Section 13 shows the alternative: registering the Arty as a custom board so the workflow handles pins and programming for you.
+projDir = 'C:\demo\hdl_coder_led_blinking\MathWorks';
+cd(projDir)
+%%
+%[text] ## 1. The Simulink model
+%[text] 1.1 Open the model `flash_led.slx`. The root level contains the design-under-test (DUT) subsystem `flash_led_top` and a Scope for simulation. Only the contents of the DUT subsystem become HDL - the Scope stays in the simulation world.
+open_system('flash_led')
+%[text] <<IMG:model_root.png>>
+%%
+%[text] 1.2 Inside `flash_led_top` the whole running light is just **three library blocks** - no hand-built counters or shift registers. An **HDL Counter** divides the clock, a second **HDL Counter** picks which LED is lit, and a **Direct Lookup Table** turns that number into the one-hot `led` value. This is the point of the model-based flow: you assemble ready-made blocks instead of writing the register-level logic by hand.
+%[text] <<IMG:model_dut_v2.png>>
+%%
+%[text] 1.3 The first block, `clock_divider`, is an **HDL Counter** set to *Count limited* with **Count to value** `MAX_COUNT-1`. It counts the 100 MHz clock and its **count_hit** output (renamed `tick`) pulses high for one cycle each time the counter wraps - once every `MAX_COUNT` cycles. With `MAX_COUNT = 5000000` that is 20 Hz, so the lit LED steps 20 times per second. The unused `count` output is sent to a Terminator.
+%%
+%[text] 1.4 The second block, `led_index`, is another **HDL Counter** (*Count limited* to 7) whose **enable** input is driven by `tick`, so it advances 0, 1, 2, ... 7 and wraps - one step per tick. The **Direct Lookup Table** `led_lookup` holds the eight one-hot patterns `[1 2 4 8 16 32 64 128]` and outputs the entry selected by `led_index`, giving a single lit LED that walks left across the bank. On reset both counters return to 0, so `led` starts at LED0 - the same behaviour as the hand-written VHDL reference.
+%%
+%[text] 1.5 `MAX_COUNT` is a model workspace variable, so the shift speed can be changed without editing the diagram. The value stored in the model is the hardware value.
+mws = get_param('flash_led','ModelWorkspace');
+disp(getVariable(mws,'MAX_COUNT'))
+%%
+%[text] ## 2. Configure the model for HDL code generation
+%[text] 2.1 `hdlsetup` applies the recommended solver and code generation settings for HDL: a fixed-step discrete solver, inlined parameters and an ASIC/FPGA hardware device type. The fundamental sample time is set to 10 ns so one simulation step corresponds to one 100 MHz clock cycle. Open **Modeling > Model Settings** and check the **Solver** pane.
+%[text] <<IMG:cfg_solver.png>>
+%%
+%[text] 2.2 On the **HDL Code Generation** pane select `VHDL` as the target language and generate code for the DUT subsystem `flash_led/flash_led_top`.
+%[text] <<IMG:cfg_hdl.png>>
+%%
+%[text] 2.3 On the **HDL Code Generation > Target** pane select the *Generic ASIC/FPGA* workflow, the *Xilinx Vivado* synthesis tool and the Arty A7-35T FPGA: family `Artix7`, device `xc7a35ti`, package `csg324`, speed `-1L`, with a target frequency of 100 MHz.
+%[text] <<IMG:cfg_target.png>>
+%%
+%[text] 2.4 **Important - remove the clock-enable ports.** By default HDL Coder adds two framework ports to the generated top level: a `clk_enable` input that gates every register and a `ce_out` output that forwards the enable to downstream modules. They are not real board I/O: `clk_enable` must be tied high and `ce_out` left open, and if the generated top level is used directly as the Vivado top module they show up as unassignable pins and the bitstream fails, as below.
+%[text] <<IMG:vivado/1.png>>
+%[text] For a single-rate design like this one, enable **Minimize clock enables** on the **HDL Code Generation > Global Settings > Ports** tab (or search the configuration dialog for it). The regenerated entity then has only `clk`, `reset` and `led` - exactly the ports of the hand-written reference design. Leave *Minimize global resets* off so the `reset` port (push button BTN0) is kept.
+%[text] <<IMG:vivado/2.png>>
+%%
+%[text] 2.5 The same configuration can be applied from the command line. `hdlsetuptoolpath` registers the Vivado installation with HDL Coder and must be run once per MATLAB session.
+hdlsetup('flash_led')
+hdlset_param('flash_led','TargetLanguage','VHDL','HDLSubsystem','flash_led/flash_led_top','TargetFrequency',100)
+hdlset_param('flash_led','SynthesisTool','Xilinx Vivado','SynthesisToolChipFamily','Artix7','SynthesisToolDeviceName','xc7a35ti','SynthesisToolPackageName','csg324','SynthesisToolSpeedValue','-1L')
+hdlset_param('flash_led','MinimizeClockEnables','on')
+hdlsetuptoolpath('ToolName','Xilinx Vivado','ToolPath','C:\Xilinx\Vivado\2024.1\bin\vivado.bat');
+%%
+%[text] ## 3. Simulate the design
+%[text] 3.1 At the hardware value of `MAX_COUNT` the LED only shifts every 50 ms of simulated time, so for a quick functional check lower `MAX_COUNT` to 10 and simulate 3 us. The logged `led` signal shows the one-hot pattern 1, 2, 4, ... 128 rotating left and wrapping - the same behaviour the board will show, just faster.
+assignin(mws,'MAX_COUNT',10)
+out = sim('flash_led','StopTime','3e-6');
+led = out.logsout.getElement('led').Values;
+stairs(led.Time*1e9,double(led.Data),'LineWidth',1.2)
+xlabel('time (ns)')
+ylabel('led (uint8)')
+title('One-hot LED pattern rotating left (MAX\_COUNT = 10)')
+grid on
+assignin(mws,'MAX_COUNT',5000000)
+%%
+%[text] 3.2 The same result can be viewed interactively: press **Run** in the Simulink toolstrip and open the Scope.
+%[text] <<IMG:sim_scope.png>>
+%%
+%[text] ## 4. Open the HDL Workflow Advisor
+%[text] 4.1 In the Simulink toolstrip open the **Apps** tab and click **HDL Coder** (under *Code Generation*).
+%[text] <<IMG:apps_gallery.png>>
+%%
+%[text] 4.2 The **HDL Code** tab appears with `flash_led_top` preselected as the code-generation target. Click **Workflow Advisor**.
+%[text] <<IMG:hdlcode_tab.png>>
+%%
+%[text] 4.3 The HDL Workflow Advisor opens with four task groups: Set Target, Prepare Model For HDL Code Generation, HDL Code Generation, and FPGA Synthesis and Analysis. The advisor can also be opened from the command line with `hdladvisor('flash_led/flash_led_top')`.
+%[text] <<IMG:advisor_overview.png>>
+%%
+%[text] ## 5. Set the target device and frequency
+%[text] 5.1 Task **1.1 Set Target Device and Synthesis Tool** is prefilled from the model settings of section 2: workflow *Generic ASIC/FPGA*, tool *Xilinx Vivado* (version 2024.1 is detected from the registered tool path), device `xc7a35ti csg324 -1L` and project folder `hdl_prj`. Click **Run This Task**. If the project folder already exists the advisor asks whether to reuse it - answer **Yes**.
+%[text] <<IMG:advisor_task11.png>>
+%%
+%[text] 5.2 The task finishes with a green check mark.
+%[text] <<IMG:advisor_task11_passed.png>>
+%%
+%[text] 5.3 Task **1.2 Set Target Frequency** shows the 100 MHz target taken from the model. Run it. HDL Coder later writes this as a `create_clock` constraint for the Vivado project.
+%[text] <<IMG:advisor_task12.png>>
+%%
+%[text] ## 6. Generate the VHDL code
+%[text] 6.1 The tasks in groups **2. Prepare Model For HDL Code Generation** and **3. HDL Code Generation** check the model and generate the VHDL. Run them in order (or right-click a task and choose *Run to Selected Task*). Because the design is made of library blocks, HDL Coder flattens them into a single synthesizable entity: `flash_led_top.vhd` (plus a small package `flash_led_top_pkg.vhd`) in `hdl_prj\hdlsrc\flash_led`. When code generation completes, the Code Generation Report opens.
+%[text] <<IMG:codegen_report.png>>
+%%
+%[text] 6.2 The generated top-level entity has exactly the three board-level ports and nothing else - `clk`, `reset` and `led` - because *Minimize clock enables* removed the framework ports.
+gen = fileread(fullfile(projDir,'hdl_prj','hdlsrc','flash_led','flash_led_top.vhd'));
+k1 = strfind(gen,'ENTITY flash_led_top IS');
+k2 = strfind(gen,'END flash_led_top;');
+disp(gen(k1:k2+17))
+%%
+%[text] ## 7. Create the Vivado project and run synthesis in the Advisor
+%[text] 7.1 Run task **4.1 Create Project** with its default settings. HDL Coder creates a Vivado project at `hdl_prj\vivado_prj\flash_led_top_vivado.xpr` containing the generated VHDL and the 100 MHz clock constraint.
+%[text] 7.2 Optionally run the tasks under **4.2 Perform Synthesis and P/R** (untick *Skip this task* on 4.2.2 first). These runs are for analysis - the advisor parses the utilization and timing results back into MATLAB: the running light uses a tiny fraction of the device and the 100 MHz clock is met with plenty of slack.
+%[text] <<IMG:advisor_synth_passed.png>>
+%[text] <<IMG:advisor_impl_passed.png>>
+%[text] **Why the extra Vivado steps below?** The Generic ASIC/FPGA workflow stops here by design: it knows the FPGA device but not the board, so it has no pin locations, and its synthesis run is configured for analysis (out-of-context) rather than for a full bitstream. Sections 8-11 finish the job in the Vivado GUI: assign pins, switch the synthesis run to a full-design run, generate the bitstream and program the board. Section 13 shows how registering a custom board removes sections 8-11 entirely.
+%%
+%[text] ## 8. Assign the board pins in Vivado
+%[text] 8.1 Open the generated project in Vivado: **File > Open Project** and select `hdl_prj\vivado_prj\flash_led_top_vivado.xpr` (or double-click the file).
+%[text] 8.2 In the Flow Navigator click **Open Synthesized Design**, then open **Window > I/O Ports**. Assign the *Package Pin* and set *I/O Std* to `LVCMOS33` for every port, then tick *Fixed*:
+%[text:table]
+%[text] | Port | Arty A7 pin | Board function |
+%[text] | --- | --- | --- |
+%[text] | clk | E3 | 100 MHz system clock |
+%[text] | reset | D9 | push button BTN0, active high |
+%[text] | led[0..3] | H5, J5, T9, T10 | green LEDs LD4..LD7 |
+%[text] | led[4..7] | F6, J4, J2, H6 | green channel of RGB LEDs LD0..LD3 |
+%[text:table]
+%[text] <<IMG:vivado/3.png>>
+%[text] 8.3 Press **Ctrl+S** to save the constraints. Vivado asks for a constraints file name (for example `flash_led_top_vivado`) and adds the pin assignments to the project as an XDC file.
+%%
+%[text] ## 9. Switch synthesis to a full-design run
+%[text] 9.1 HDL Coder creates the synthesis run in **out-of-context (OOC) mode** - right for module analysis, but it skips I/O buffer insertion, so a bitstream build fails in the placer with *Unbuffered IOs* / *Placer could not place all instances*:
+%[text] <<IMG:vivado/4.png>>
+%[text] 9.2 In the **Design Runs** tab, right-click **synth_1** and choose **Change Run Settings...**
+%[text] <<IMG:vivado/5.png>>
+%[text] 9.3 The **More Options** field at the bottom of the dialog contains `-mode out_of_context`:
+%[text] <<IMG:vivado/6.png>>
+%[text] 9.4 Delete the text so the field is empty, then click **OK**.
+%[text] <<IMG:vivado/7.png>>
+%[text] 9.5 Right-click **synth_1** again and choose **Reset Runs** so the next build starts clean.
+%[text] <<IMG:vivado/8.png>>
+%[text] The Tcl Console equivalent of 9.2-9.5 is: `set_property -name {STEPS.SYNTH_DESIGN.ARGS.MORE OPTIONS} -value {} -objects [get_runs synth_1]` followed by `reset_run synth_1`.
+%%
+%[text] ## 10. Generate the bitstream
+%[text] 10.1 In the Flow Navigator click **Generate Bitstream** (under *Program and Debug*). Vivado re-runs synthesis - now as a full-design run with I/O buffers - then implementation, and writes the bitstream. When it finishes, choose **Open Hardware Manager** in the completion dialog.
+%[text] <<IMG:vivado/9.png>>
+%%
+%[text] ## 11. Program the board
+%[text] 11.1 With the Hardware Manager open (Flow Navigator > **Open Hardware Manager** if you closed the dialog), click **Open Target > Auto Connect**. Vivado connects to the Arty's USB-JTAG interface and the device `xc7a35t_0` appears in the Hardware tree.
+%[text] 11.2 Right-click `xc7a35t_0` and choose **Program Device...**
+%[text] <<IMG:vivado/prog1_context_menu.png>>
+%[text] 11.3 The bitstream file is prefilled with `...\flash_led_top_vivado.runs\impl_1\flash_led_top.bit`. Click **Program**.
+%[text] <<IMG:vivado/prog2_program_dialog.png>>
+%[text] 11.4 The device status changes to *Programmed* and the Tcl Console reports `End of startup status: HIGH` - the DONE LED lights and the design starts immediately.
+%[text] <<IMG:vivado/prog3_programmed.png>>
+%[text] The Tcl Console equivalent, useful for scripting: `open_hw_manager`, `connect_hw_server`, `open_hw_target`, then `set_property PROGRAM.FILE {<path to .bit>} [get_hw_devices xc7a35t_0]` and `program_hw_devices [get_hw_devices xc7a35t_0]`.
+%%
+%[text] ## 12. Observe the result
+%[text] A single lit LED sweeps across the eight LEDs - from LD4 through LD7 (green LEDs) and on through the green channels of the RGB LEDs LD0..LD3 - then wraps around, 20 steps per second (one full sweep every 0.4 s). Hold push button **BTN0** to reset the pattern back to LED0. This matches the behaviour of the hand-written VHDL reference design: same clock divider, same one LED at a time, same rotate-left direction.
+%[text] **Where everything lives**
+%[text] - `flash_led.slx` - the Simulink model (DUT: `flash_led_top`, built from HDL Counter + Lookup Table blocks)
+%[text] - `hdl_prj\hdlsrc\flash_led` - generated VHDL and code generation reports
+%[text] - `hdl_prj\vivado_prj` - Vivado project, synthesis/implementation runs and bitstream
+%[text] - `docs\images` - the screenshots used in this lab \
+%%
+%[text] ## 13. Optional: register the Arty as a custom board
+%[text] Sections 8-11 exist only because the Generic ASIC/FPGA workflow does not know the Arty board. If you register the Arty as a **custom board**, HDL Coder generates the pin constraints from the board definition and the **IP Core Generation** workflow runs all the way through to programming - no manual I/O Ports step (section 8), no out-of-context fix (section 9), and JTAG programming becomes a workflow task (sections 10-11). A complete, ready-to-use registration is provided in the `arty_custom_board` folder next to this guide, modeled on the plugin MathWorks ships for its own boards (`matlabroot\toolbox\hdlcoder\boards\amd\+XilinxArty`).
+%[text] ### 13.1 What is in the folder
+%[text] - `hdlcoder_board_customization.m` - registration entry point; must be on the MATLAB path
+%[text] - `+ArtyA7Custom\plugin_board.m` - an `hdlcoder.Board` object: device `xc7a35ti-csg324 -1L` plus the LED / push-button / slide-switch I/O interfaces with their Arty pins
+%[text] - `+ArtyA7Custom\hdlcoder_ref_design_customization.m` - registers the reference design for this board
+%[text] - `+ArtyA7Custom\+vivado_no_axi\plugin_rd.m` - an `hdlcoder.ReferenceDesign` (no processor, no AXI): a Clocking Wizard makes the DUT clock and a Processor System Reset makes the synchronized reset
+%[text] - `+ArtyA7Custom\+vivado_no_axi\system_top.tcl` - the Vivado block design (clock wizard + reset)
+%[text] - `+ArtyA7Custom\+vivado_no_axi\arty_clock_constraints.xdc` - the board clock (E3) and reset (BTN0/D9) pins \
+%[text] ### 13.2 Put the board plugin on the MATLAB path
+%[text] Add the folder to the path (put this line in your `startup.m` to make it permanent), then construct and validate the board object. `validateBoard` returning without error confirms HDL Coder accepts the registration. After adding the path for the first time, restart MATLAB (or run `rehash toolboxcache`) so the *Target platform* list in the Workflow Advisor picks up the new board.
+addpath(fullfile(projDir,'arty_custom_board'))
+hB = ArtyA7Custom.plugin_board();
+hB.validateBoard();
+disp(hB.BoardName)
+%%
+%[text] ### 13.3 The interfaces the board exposes
+%[text] `plugin_board.m` maps each named board interface to its Arty pins (from the Digilent master XDC, all LVCMOS33). BTN0 (D9) is deliberately *not* a push-button interface here - the reference design uses it as the system reset.
+%[text:table]
+%[text] | InterfaceID | Dir | Width | Pins | Board parts |
+%[text] | --- | --- | --- | --- | --- |
+%[text] | LEDs General Purpose | OUT | 8 | H5, J5, T9, T10, F6, J4, J2, H6 | LD4..LD7 + RGB green |
+%[text] | Push Buttons | IN | 3 | C9, B9, B8 | BTN1..BTN3 |
+%[text] | Slide Switches | IN | 4 | A8, C11, C10, A10 | SW0..SW3 |
+%[text:table]
+%%
+%[text] ### 13.4 Point the model at the custom board (Set Target Interface)
+%[text] In the HDL Workflow Advisor, task **1.1** now lists **Digilent Arty A7-35T (custom)** in the *Target platform* dropdown, task **1.2** offers the *Default system (no AXI)* reference design, and a new **Set Target Interface** task appears where you map the DUT `led` port to the board LED bank. That mapping is what replaces the manual pin assignment of section 8. The equivalent commands (they only change model settings) are:
+%[text] - `hdlset_param('flash_led','Workflow','IP Core Generation')`
+%[text] - `hdlset_param('flash_led','TargetPlatform','Digilent Arty A7-35T (custom)')`
+%[text] - `hdlset_param('flash_led','ReferenceDesign','Default system (no AXI)')`
+%[text] - `hdlset_param('flash_led','TargetFrequency',100)`
+%[text] - `hdlset_param('flash_led/flash_led_top/led','IOInterface','LEDs General Purpose [0:7]')` \
+%[text] If `TargetPlatform` reports an *Invalid value* error, the platform list was cached before the folder was on the path - restart MATLAB with the `addpath` in your `startup.m` and set it again.
+%%
+%[text] ### 13.5 Run the workflow to a programmed board
+%[text] With the board and interface set, run the IP Core Generation workflow. It builds the block design (clock wizard + reset), packages the DUT as an IP core, **generates the pin constraints from the board definition** (no hand-written XDC), builds the bitstream and programs the Arty. The build takes several minutes, so run it deliberately from the Workflow Advisor, or from the command line with:
+%[text] - `hWC = hdlcoder.WorkflowConfig('SynthesisTool','Xilinx Vivado','TargetWorkflow','IP Core Generation');`
+%[text] - `hWC.ProjectFolder = 'hdl_prj_ipcore';`
+%[text] - `hWC.RunTaskGenerateSoftwareInterface = false;` (no embedded processor)
+%[text] - `hWC.RunTaskProgramTargetDevice = true;` (JTAG programming)
+%[text] - `hdlcoder.runWorkflow('flash_led/flash_led_top', hWC);` \
+%[text] During **Create Project**, HDL Coder writes a constraints file straight from the board definition. For this design it contains exactly the eight LED pins - the same mapping section 8 did by hand: `set_property PACKAGE_PIN H5 [get_ports {GPLEDs[0]}]` through `set_property PACKAGE_PIN H6 [get_ports {GPLEDs[7]}]`, each with `IOSTANDARD LVCMOS33`.
+%%
+%[text] ### 13.6 What the custom board changes
+%[text] - **Section 8 (pin assignment) disappears** - the pin locations and I/O standards come from `plugin_board.m` and are written into the project automatically during Create Project.
+%[text] - **Section 9 (out-of-context fix) disappears** - IP Core Generation builds a full block-design project that already has I/O buffers, so there is no placer failure.
+%[text] - **Sections 10-11 (bitstream + programming) become workflow tasks** - *Build FPGA Bitstream* and *Program Target Device* run from the advisor. \
+%[text] Two things to keep in mind. The *Target Frequency* reconfigures the reference design's Clocking Wizard, so the DUT clock really runs at 100 MHz. And if the *Program Target Device* task fails with a Xilinx `EXCEPTION_ACCESS_VIOLATION` from the JTAG server (an environmental crash of `hw_server`/`cs_server` seen on some machines), the bitstream is still valid - program it from the Vivado Hardware Manager exactly as in section 11, pointing at `hdl_prj_ipcore\vivado_ip_prj\vivado_prj.runs\impl_1\system_top_wrapper.bit`.
+%[text] Because section 13.4 above only prints the equivalent commands, the model in this notebook stays on the Generic ASIC/FPGA flow of sections 1-12 - nothing to undo.
+
+%[appendix]{"version":"1.0"}
+%---
+%[metadata:view]
+%   data: {"layout":"inline"}
+%---

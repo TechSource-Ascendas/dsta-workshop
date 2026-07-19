@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="fft8_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="fft8_pkg" />
+            <top_module name="fft8_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="54.351 ns"></ZoomEndTime>
+      <Cursor1Time time="40.350 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="182"></NameColumnWidth>
+      <ValueColumnWidth column_width="332"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="9" />
+   <wvobject fp_name="/fft8_tb/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/fft8_tb/rst" type="logic">
+      <obj_property name="ElementShortName">rst</obj_property>
+      <obj_property name="ObjectShortName">rst</obj_property>
+   </wvobject>
+   <wvobject fp_name="/fft8_tb/valid_in" type="logic">
+      <obj_property name="ElementShortName">valid_in</obj_property>
+      <obj_property name="ObjectShortName">valid_in</obj_property>
+   </wvobject>
+   <wvobject fp_name="/fft8_tb/x" type="array">
+      <obj_property name="ElementShortName">x[0:7][15:0]</obj_property>
+      <obj_property name="ObjectShortName">x[0:7][15:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/fft8_tb/valid_out" type="logic">
+      <obj_property name="ElementShortName">valid_out</obj_property>
+      <obj_property name="ObjectShortName">valid_out</obj_property>
+   </wvobject>
+   <wvobject fp_name="/fft8_tb/y" type="array">
+      <obj_property name="ElementShortName">y[0:7]</obj_property>
+      <obj_property name="ObjectShortName">y[0:7]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/fft8_tb/TOL" type="other">
+      <obj_property name="ElementShortName">TOL</obj_property>
+      <obj_property name="ObjectShortName">TOL</obj_property>
+   </wvobject>
+   <wvobject fp_name="/fft8_tb/EXP_RE" type="array">
+      <obj_property name="ElementShortName">EXP_RE[0:7]</obj_property>
+      <obj_property name="ObjectShortName">EXP_RE[0:7]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/fft8_tb/EXP_IM" type="array">
+      <obj_property name="ElementShortName">EXP_IM[0:7]</obj_property>
+      <obj_property name="ObjectShortName">EXP_IM[0:7]</obj_property>
+   </wvobject>
+</wave_config>

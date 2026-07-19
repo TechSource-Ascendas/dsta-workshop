@@ -1,0 +1,34 @@
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/MathWorks/hdlsrc/fft8/fft8_dut_pkg.vhd" into library work
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/MathWorks/hdlsrc/fft8/SimpleDualPortRAM_generic.vhd" into library work
+INFO: [VRFC 10-3107] analyzing entity 'SimpleDualPortRAM_generic'
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/MathWorks/hdlsrc/fft8/SDFCommutator1.vhd" into library work
+INFO: [VRFC 10-3107] analyzing entity 'SDFCommutator1'
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/MathWorks/hdlsrc/fft8/RADIX22FFT_SDF1_1.vhd" into library work
+INFO: [VRFC 10-3107] analyzing entity 'RADIX22FFT_SDF1_1'
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/MathWorks/hdlsrc/fft8/RADIX22FFT_CTRL1_1.vhd" into library work
+INFO: [VRFC 10-3107] analyzing entity 'RADIX22FFT_CTRL1_1'
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/MathWorks/hdlsrc/fft8/SDFCommutator2.vhd" into library work
+INFO: [VRFC 10-3107] analyzing entity 'SDFCommutator2'
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/MathWorks/hdlsrc/fft8/RADIX22FFT_SDF2_2.vhd" into library work
+INFO: [VRFC 10-3107] analyzing entity 'RADIX22FFT_SDF2_2'
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/MathWorks/hdlsrc/fft8/RADIX22FFT_CTRL1_2.vhd" into library work
+INFO: [VRFC 10-3107] analyzing entity 'RADIX22FFT_CTRL1_2'
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/MathWorks/hdlsrc/fft8/TWDLROM_3_1.vhd" into library work
+INFO: [VRFC 10-3107] analyzing entity 'TWDLROM_3_1'
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/MathWorks/hdlsrc/fft8/Complex4Multiply.vhd" into library work
+INFO: [VRFC 10-3107] analyzing entity 'Complex4Multiply'
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/MathWorks/hdlsrc/fft8/SDFCommutator3.vhd" into library work
+INFO: [VRFC 10-3107] analyzing entity 'SDFCommutator3'
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/MathWorks/hdlsrc/fft8/RADIX22FFT_SDF1_3.vhd" into library work
+INFO: [VRFC 10-3107] analyzing entity 'RADIX22FFT_SDF1_3'
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/MathWorks/hdlsrc/fft8/RADIX22FFT_CTRL1_1_block.vhd" into library work
+INFO: [VRFC 10-3107] analyzing entity 'RADIX22FFT_CTRL1_1_block'
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/MathWorks/hdlsrc/fft8/RADIX2FFT_bitNatural.vhd" into library work
+INFO: [VRFC 10-3107] analyzing entity 'RADIX2FFT_bitNatural'
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/MathWorks/hdlsrc/fft8/FFT.vhd" into library work
+INFO: [VRFC 10-3107] analyzing entity 'FFT'
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/MathWorks/hdlsrc/fft8/fft8_dut.vhd" into library work
+INFO: [VRFC 10-3107] analyzing entity 'fft8_dut'
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/MathWorks/hdlsrc/fft8/fft8_dut_tb_pkg.vhd" into library work
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/demo/hdl_coder_led_blinking/FFT_Comparison/MathWorks/hdlsrc/fft8/fft8_dut_tb.vhd" into library work
+INFO: [VRFC 10-3107] analyzing entity 'fft8_dut_tb'

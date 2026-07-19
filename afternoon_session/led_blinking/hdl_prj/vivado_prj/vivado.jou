@@ -1,0 +1,71 @@
+#-----------------------------------------------------------
+# Vivado v2024.1 (64-bit)
+# SW Build 5076996 on Wed May 22 18:37:14 MDT 2024
+# IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
+# SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
+# Start of session at: Mon Jul 13 00:23:05 2026
+# Process ID: 3080
+# Current directory: C:/demo/hdl_coder_led_blinking/hdl_prj/vivado_prj
+# Command line: vivado.exe C:\demo\hdl_coder_led_blinking\hdl_prj\vivado_prj\flash_led_top_vivado.xpr
+# Log file: C:/demo/hdl_coder_led_blinking/hdl_prj/vivado_prj/vivado.log
+# Journal file: C:/demo/hdl_coder_led_blinking/hdl_prj/vivado_prj\vivado.jou
+# Running On        :TS-93724
+# Platform          :Windows Server 2016 or Windows 10
+# Operating System  :26200
+# Processor Detail  :11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz
+# CPU Frequency     :2803 MHz
+# CPU Physical cores:4
+# CPU Logical cores :8
+# Host memory       :34069 MB
+# Swap memory       :40802 MB
+# Total Virtual     :74871 MB
+# Available Virtual :26978 MB
+#-----------------------------------------------------------
+start_gui
+open_project C:/demo/hdl_coder_led_blinking/hdl_prj/vivado_prj/flash_led_top_vivado.xpr
+update_compile_order -fileset sources_1
+open_run impl_1
+set_property IOSTANDARD LVCMOS33 [get_ports [list {led[7]} {led[6]} {led[5]} {led[4]} {led[3]} {led[2]} {led[1]} {led[0]}]]
+set_property IOSTANDARD LVCMOS33 [get_ports [list clk]]
+set_property IOSTANDARD LVCMOS33 [get_ports [list reset]]
+place_ports {led[7]} H6
+place_ports {led[6]} J2
+place_ports {led[5]} J4
+place_ports {led[4]} F6
+place_ports {led[3]} T10
+place_ports {led[2]} T9
+place_ports {led[1]} J5
+place_ports {led[0]} H5
+place_ports clk E3
+place_ports reset D9
+close [ open C:/demo/hdl_coder_led_blinking/hdl_prj/vivado_prj/flash_led_top_vivado.srcs/constrs_1/new/flash_led_top_vivado.xdc w ]
+add_files -fileset constrs_1 C:/demo/hdl_coder_led_blinking/hdl_prj/vivado_prj/flash_led_top_vivado.srcs/constrs_1/new/flash_led_top_vivado.xdc
+set_property target_constrs_file C:/demo/hdl_coder_led_blinking/hdl_prj/vivado_prj/flash_led_top_vivado.srcs/constrs_1/new/flash_led_top_vivado.xdc [current_fileset -constrset]
+save_constraints -force
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+set_property {STEPS.SYNTH_DESIGN.ARGS.MORE OPTIONS} {} [get_runs synth_1]
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+open_hw_manager
+connect_hw_server -allow_non_jtag
+open_hw_target
+current_hw_device [get_hw_devices xc7a35t_0]
+refresh_hw_device -update_hw_probes false [lindex [get_hw_devices xc7a35t_0] 0]
+set_property PROBES.FILE {} [get_hw_devices xc7a35t_0]
+set_property FULL_PROBES.FILE {} [get_hw_devices xc7a35t_0]
+set_property PROGRAM.FILE {C:/Users/KoayXianCong/Desktop/lab1_flash_led/lab1_flash_led.runs/impl_1/flash_led_top.bit} [get_hw_devices xc7a35t_0]
+program_hw_devices [get_hw_devices xc7a35t_0]
+refresh_hw_device [lindex [get_hw_devices xc7a35t_0] 0]
+set_property PROBES.FILE {} [get_hw_devices xc7a35t_0]
+set_property FULL_PROBES.FILE {} [get_hw_devices xc7a35t_0]
+set_property PROGRAM.FILE {C:/demo/hdl_coder_led_blinking/hdl_prj/vivado_prj/flash_led_top_vivado.runs/impl_1/flash_led_top.bit} [get_hw_devices xc7a35t_0]
+program_hw_devices [get_hw_devices xc7a35t_0]
+refresh_hw_device [lindex [get_hw_devices xc7a35t_0] 0]
+set_property PROBES.FILE {} [get_hw_devices xc7a35t_0]
+set_property FULL_PROBES.FILE {} [get_hw_devices xc7a35t_0]
+set_property PROGRAM.FILE {C:/demo/hdl_coder_led_blinking/hdl_prj/vivado_prj/flash_led_top_vivado.runs/impl_1/flash_led_top.bit} [get_hw_devices xc7a35t_0]
+program_hw_devices [get_hw_devices xc7a35t_0]
+refresh_hw_device [lindex [get_hw_devices xc7a35t_0] 0]
